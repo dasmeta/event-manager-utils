@@ -10,7 +10,17 @@ const topicsWaiting = new Map();
 class TopicEmitter extends EventEmitter {}
 const topicEmitter = new TopicEmitter();
 
-const subscriptionHandler = (topic, subscription, handler, maxAttempts = 5) => async subscriptionObject => {
+const subscriptionHandler = (
+    topic, 
+    subscription, 
+    handler,
+    maxAttempts = 5, 
+    onStart = () => {}, 
+    onSuccess = () => {}, 
+    onFailure = () => {}, 
+    onPreconditionFailure = () => {}, 
+    maxAttemptsCheck = () => {}
+) => async subscriptionObject => {
     const onMessage = message => {
         const { eventId, traceId, data, subscription: eventSubscription = "", dataSource } = JSON.parse(message.data.toString());
         const context = { topic, subscription, traceId, dataSource };
@@ -33,7 +43,7 @@ const subscriptionHandler = (topic, subscription, handler, maxAttempts = 5) => a
                 logger.debug("EXEC SUCCESS");
             }
             if (eventId) {
-                await store.recordSuccess({ topic, subscription, eventId, traceId });
+                await onSuccess({ topic, subscription, eventId, traceId });
             }
             if (logger.isDebug()) {
                 logger.debug(`ACK Before eventId: ${eventId}, topic: ${topic}, subscription: ${subscription}`);
@@ -48,7 +58,6 @@ const subscriptionHandler = (topic, subscription, handler, maxAttempts = 5) => a
         };
         const rejected = async err => {
             logger.error("HANDLE ERROR", err, { topic, subscription, data, eventId });
-            bugsnag.notify(err, { topic, subscription, data, eventId });
             if (logger.isDebug() && eventId) {
                 logger.timeEnd(`EXEC eventId: ${eventId}, topic: ${topic}, subscription: ${subscription}`);
             }
@@ -58,13 +67,13 @@ const subscriptionHandler = (topic, subscription, handler, maxAttempts = 5) => a
 
             if (eventId) {
                 if (err.message.includes("PreconditionFailedError")) {
-                    if ((await store.hasReachedMaxAttempts({ topic, subscription, eventId, maxAttempts }))) {
-                        await store.recordFailure({ topic, subscription, eventId, traceId, error: err });
+                    if ((await maxAttemptsCheck({ topic, subscription, eventId, maxAttempts }))) {
+                        await onFailure({ topic, subscription, eventId, traceId, error: err });
                     } else {
-                        await store.recordPreconditionFailure({ topic, subscription, eventId, traceId });
+                        await onPreconditionFailure({ topic, subscription, eventId, traceId });
                     }
                 } else {
-                    await store.recordFailure({ topic, subscription, eventId, traceId, error: err });
+                    await onFailure({ topic, subscription, eventId, traceId, error: err });
                 }
             }
             if (logger.isDebug()) {
@@ -79,14 +88,12 @@ const subscriptionHandler = (topic, subscription, handler, maxAttempts = 5) => a
             logger.timeStart(`EXEC eventId: ${eventId}, topic: ${topic}, subscription: ${subscription}`);
         }
         if (eventId) {
-            store
-                .recordStart({ topic, subscription, eventId })
+                onStart({ topic, subscription, eventId })
                 .then(() => {
                     handler(data, context).then(fulfilled, rejected);
                 })
                 .catch(err => {
                     logger.error("ERROR: Can not store record start, it is probably issue with mongodb", err);
-                    bugsnag.notify(err, { topic, subscription, eventId });
                 });
         } else {
             handler(data, context).then(fulfilled, rejected);
@@ -95,7 +102,6 @@ const subscriptionHandler = (topic, subscription, handler, maxAttempts = 5) => a
 
     const onError = err => {
         logger.error("SUBSCRIPTION ERROR", err, { topic, subscription });
-        bugsnag.notify(err, { topic, subscription });
         // process.exit(1);
     };
 
