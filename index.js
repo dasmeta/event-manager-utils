@@ -1,9 +1,9 @@
-const { clientFactory } = require("./src/clientFactory");
 const logger = require("./src/logger");
 const queue = require("./src/queue");
+const { clientFactory } = require("./src/adapter/clientFactory");
 
 module.exports = exports = {
-    clientFactory,
     logger,
-    queue
+    queue,
+    clientFactory
 };
