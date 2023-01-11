@@ -88,13 +88,13 @@ const subscriptionHandler = (
             logger.timeStart(`EXEC eventId: ${eventId}, topic: ${topic}, subscription: ${subscription}`);
         }
         if (eventId) {
-                onStart({ topic, subscription, eventId })
-                .then(() => {
-                    handler(data, context).then(fulfilled, rejected);
-                })
-                .catch(err => {
-                    logger.error("ERROR: Can not store record start, it is probably issue with mongodb", err);
-                });
+            onStart({ topic, subscription, eventId })
+            .then(() => {
+                handler(data, context).then(fulfilled, rejected);
+            })
+            .catch(err => {
+                logger.error("ERROR: Can not store record start, it is probably issue with mongodb", err);
+            });
         } else {
             handler(data, context).then(fulfilled, rejected);
         }
@@ -165,9 +165,9 @@ async function getSubscription(topicName, subscriptionName) {
     return topic.subscription(subscriptionName);
 }
 
-async function registerSubscriber(topic, subscriptionName, handler, maxAttempts) {
+async function registerSubscriber(topic, subscriptionName, handler, maxAttempts, onStart, onSuccess, onFailure, onPreconditionFailure, maxAttemptsCheck) {
     getSubscription(topic, subscriptionName)
-        .then(subscriptionHandler(topic, subscriptionName, handler, maxAttempts))
+        .then(subscriptionHandler(topic, subscriptionName, handler, maxAttempts, onStart, onSuccess, onFailure, onPreconditionFailure, maxAttemptsCheck))
         .catch(err => {
             logger.error(`GET "${subscriptionName}" SUBSCRIPTION ERROR`, err, { topic, subscriptionName });
             process.exit(1);
