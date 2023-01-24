@@ -1,6 +1,6 @@
 {
   "name": "@dasmeta/event-manager-utils",
-  "version": "0.1.12",
+  "version": "0.1.13",
   "description": "Event manager helper functions",
   "main": "index.js",
   "author": "Hovhannes Babayan <hovhannes@tutor-platform.com> (https://tutor-platform.com)",
