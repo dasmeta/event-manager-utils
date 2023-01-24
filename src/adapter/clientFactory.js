@@ -7,6 +7,7 @@
     'GCP',
     'AMQP',
     'Kafka',
+    'SNS'
 ];
 
 const defaultMqClientName = 'GCP';
@@ -38,6 +39,11 @@ class clientFactory {
 
     static createKafkaClient(...props) {
         const {clientAdapter} = require("./kafka");
+        return new clientAdapter(...props)
+    }
+
+    static createSNSClient(...props) {
+        const {clientAdapter} = require("./sns");
         return new clientAdapter(...props)
     }
 }

@@ -1,21 +1,22 @@
 {
-    "name": "@dasmeta/event-manager-utils",
-    "version": "0.1.6",
-    "description": "Event manager helper functions",
-    "main": "index.js",
-    "author": "Hovhannes Babayan <hovhannes@tutor-platform.com> (https://tutor-platform.com)",
-    "repository": "git@github.com:dasmeta/event-manager-utils.git",
-    "license": "Apache-2.0",
-    "scripts": {
-      "prettier": "prettier --write '**/*.js'"
-    },
-    "dependencies": {
-      "@google-cloud/pubsub": "^2.5.0",
-      "amqplib": "^0.8.0",
-      "kafkajs": "^1.15.0"
-    },
-    "devDependencies": {
-      "prettier": "^1.18.2"
-    }
+  "name": "@dasmeta/event-manager-utils",
+  "version": "0.1.6",
+  "description": "Event manager helper functions",
+  "main": "index.js",
+  "author": "Hovhannes Babayan <hovhannes@tutor-platform.com> (https://tutor-platform.com)",
+  "repository": "git@github.com:dasmeta/event-manager-utils.git",
+  "license": "Apache-2.0",
+  "scripts": {
+    "prettier": "prettier --write '**/*.js'"
+  },
+  "dependencies": {
+    "@aws-sdk/client-sns": "^3.256.0",
+    "@aws-sdk/client-sts": "^3.256.0",
+    "@google-cloud/pubsub": "^2.5.0",
+    "amqplib": "^0.8.0",
+    "kafkajs": "^1.15.0"
+  },
+  "devDependencies": {
+    "prettier": "^1.18.2"
   }
-  
+}
