@@ -45,7 +45,7 @@ class topicAdapter {
     constructor(topic, client) {
         this.topic = topic;
         this.client = client;
-        this.stsClient = new STSClient();
+        this.stsClient = new STSClient({ region: process.env.AWS_REGION });
     }
 
     exists(...props) {
@@ -70,11 +70,11 @@ class topicAdapter {
         const { account } = await this.stsClient.send(callerIdentityCommand);
 
         console.log('=== ACCOUNT ===');
-        console.log(`arn:aws:sns:${process.env.AWS_DEFAULT_REGION}:${account}:${camelCase(this.topic)}`);
+        console.log(`arn:aws:sns:${process.env.AWS_REGION}:${account}:${camelCase(this.topic)}`);
 
         const command = new PublishCommand({
             Message: message,
-            TopicArn: `arn:aws:sns:${process.env.AWS_DEFAULT_REGION}:${account}:${camelCase(this.topic)}`
+            TopicArn: `arn:aws:sns:${process.env.AWS_REGION}:${account}:${camelCase(this.topic)}`
         })
         return this.client.send(command);
     }
@@ -84,13 +84,13 @@ class topicAdapter {
  * SNS client adapter for AWS
  *
  * Required env
- * - AWS_DEFAULT_REGION
+ * - AWS_REGION
  * - AWS_ACCESS_KEY_ID
  * - AWS_SECRET_ACCESS_KEY
  */
 class clientAdapter {
     constructor(...props) {
-        this.client = new SNSClient();
+        this.client = new SNSClient({ region: process.env.AWS_REGION });
     }
 
     topic(name) {
