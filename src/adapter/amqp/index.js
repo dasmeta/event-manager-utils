@@ -115,10 +115,15 @@ class topicAdapter {
     }
 
     async create(...props) {
-        return (await this.channel).assertExchange(this.name, this.#exchangeType, {
+        const channel = await this.channel;
+        channel.assertQueue(this.name, {
+            durable: true
+        });
+        channel.assertExchange(this.name, this.#exchangeType, {
             durable: true,
             ...props
         });
+        return channel.bindQueue(this.name, this.name);
     }
 
     async publish(...props) {
