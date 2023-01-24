@@ -102,7 +102,7 @@ class topicAdapter {
         this.channel = channel;
 
         /* Rabbitmq exchanger type */
-        this.#exchangeType = 'fanout';
+        this.#exchangeType = process.env.MQ_EXCHANGE_TYPE || 'fanout';
     }
 
     subscription(name) {
