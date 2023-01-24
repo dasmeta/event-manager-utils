@@ -49,7 +49,7 @@ class topicAdapter {
     }
 
     exists(...props) {
-        return true;
+        return [true];
     }
 
     create(...props) {
