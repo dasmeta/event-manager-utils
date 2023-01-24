@@ -66,8 +66,11 @@ class topicAdapter {
 
     async publish(message) {
 
-        const callerIdentityCommand = new GetCallerIdentityCommand();
-        const { account } = await this.stsClient.send(callerIdentityCommand);
+        const account = null;
+        const data = await this.stsClient.send(new GetCallerIdentityCommand());
+
+        console.log('=== DATA ===');
+        console.log(data);
 
         console.log('=== ACCOUNT ===');
         console.log(`arn:aws:sns:${process.env.AWS_REGION}:${account}:${camelCase(this.topic)}`);
