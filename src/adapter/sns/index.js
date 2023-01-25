@@ -2,8 +2,7 @@ const { SNSClient, PublishCommand } = require("@aws-sdk/client-sns");
 const { STSClient, GetCallerIdentityCommand } = require("@aws-sdk/client-sts");
 
 const camelCase = function(str) {
-    return str.toLowerCase().replace(/[^a-zA-Z0-9]+(.)/g, function(match, chr)
-    {
+    return str.toLowerCase().replace(/[^a-zA-Z0-9]+(.)/g, (match, chr) => {
         return chr.toUpperCase();
     });
   }
