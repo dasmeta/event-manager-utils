@@ -151,6 +151,7 @@ class topicAdapter {
             return new Promise(resolve => {
                 producerEmitter.setMaxListeners(producerEmitter.getMaxListeners() + 1);
                 producerEmitter.once('ProducerConnected', () => {
+                    debugIfEnabled('PRODUCER CONNECTED');
                     resolve(this.producer);
                     producerEmitter.setMaxListeners(Math.max(producerEmitter.getMaxListeners() - 1, 0));
                 });
@@ -158,7 +159,7 @@ class topicAdapter {
         }
         this.producerWaiting = true;
 
-        debugIfEnabled('CONNECTING PRODUCER');
+        debugIfEnabled('CONNECTING PRODUCER...');
 
         await this.producer.connect();
 
