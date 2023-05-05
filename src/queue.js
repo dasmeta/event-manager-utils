@@ -156,7 +156,9 @@ async function getSubscription(topicName, subscriptionName) {
         logger.debug(`SUBSCRIPTION "${subscriptionName}" NOT EXISTS, creating...`);
         logger.timeStart(`SUBSCRIPTION CREATED "${subscriptionName}"`);
     }
-    await subscription.create();
+    await subscription.create({
+        enableMessageOrdering: !!process.env.ENABLE_PUBSUB_MESSAGE_ORDERING
+    });
 
     if (logger.isDebug()) {
         logger.timeEnd(`SUBSCRIPTION CREATED "${subscriptionName}"`);
