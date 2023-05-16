@@ -68,12 +68,12 @@ const subscriptionHandler = (
             if (eventId) {
                 if (err.message.includes("PreconditionFailedError")) {
                     if ((await maxAttemptsCheck({ topic, subscription, eventId, maxAttempts }))) {
-                        await onFailure({ topic, subscription, eventId, traceId, error: err });
+                        await onFailure({ topic, subscription, eventId, traceId, error: { stack: err.stack, message: err.message } });
                     } else {
                         await onPreconditionFailure({ topic, subscription, eventId, traceId });
                     }
                 } else {
-                    await onFailure({ topic, subscription, eventId, traceId, error: err });
+                    await onFailure({ topic, subscription, eventId, traceId, error: { stack: err.stack, message: err.message } });
                 }
             }
             if (logger.isDebug()) {
