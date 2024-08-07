@@ -1,6 +1,6 @@
 {
   "name": "@dasmeta/event-manager-utils",
-  "version": "0.1.18",
+  "version": "0.1.19",
   "description": "Event manager helper functions",
   "main": "index.js",
   "author": "Hovhannes Babayan <hovhannes@tutor-platform.com> (https://tutor-platform.com)",
@@ -10,8 +10,8 @@
     "prettier": "prettier --write '**/*.js'"
   },
   "dependencies": {
-    "@aws-sdk/client-sns": "3.454.0",
-    "@aws-sdk/client-sts": "3.454.0",
+    "@aws-sdk/client-sns": "3.256.0",
+    "@aws-sdk/client-sts": "3.256.0",
     "@google-cloud/pubsub": "^2.5.0",
     "amqplib": "^0.8.0",
     "kafkajs": "^1.15.0"
