@@ -1,6 +1,6 @@
 {
   "name": "@dasmeta/event-manager-utils",
-  "version": "0.1.20",
+  "version": "0.2.0",
   "description": "Event manager helper functions",
   "main": "index.js",
   "author": "Hovhannes Babayan <hovhannes@tutor-platform.com> (https://tutor-platform.com)",
@@ -13,7 +13,7 @@
     "@aws-sdk/client-sns": "3.256.0",
     "@aws-sdk/client-sts": "3.256.0",
     "@google-cloud/pubsub": "^2.5.0",
-    "amqplib": "^0.8.0",
+    "amqplib": "^0.10.7",
     "generic-pool": "^3.9.0",
     "kafkajs": "^1.15.0"
   },
