@@ -34,7 +34,7 @@ class subscriptionAdapter {
      */
     #topic;
 
-    onMassage = async () => {};
+    onMessage = async () => {};
     onError = async () => {};
 
     constructor(name, topic) {
@@ -65,13 +65,13 @@ class subscriptionAdapter {
 
             const channel = this.#channel;
 
-            this.onMassage = async (msg) => {
+            this.onMessage = async (msg) => {
                 if (msg !== null) {
                     await callback(new messageAdapter(msg, channel))
                 }
             }
 
-            this.#channel.consume(this.#name, this.onMassage, {
+            this.#channel.consume(this.#name, this.onMessage, {
                 consumerTag: this.#name,
                 noAck: false
             });
@@ -123,10 +123,10 @@ class topicAdapter {
     async create(...props) {
         const channel = await this.#getChannel();
         try {
-            channel.assertQueue(this.name, {
+            await channel.assertQueue(this.name, {
                 durable: true
             });
-            channel.assertExchange(this.name, this.#exchangeType, {
+            await channel.assertExchange(this.name, this.#exchangeType, {
                 durable: true,
                 ...props
             });
@@ -187,7 +187,7 @@ class clientAdapter {
             })
 
             this.#connection.on('close', () => {
-                console.log(`AMQP client closed connection`, err);
+                console.log(`AMQP client closed connection`);
                 this.#connection = null;
                 this.reconnect();
             })
@@ -196,12 +196,23 @@ class clientAdapter {
                 create: async () => {
                     const channel = await this.#connection.createChannel();
                     channel.on('close', () => console.log('AMQP client channel closed'));
-                    channel.on('error', () => console.error('AMQP client channel error', err));
+                    channel.on('error', (err) => console.error('AMQP client channel error', err));
 
                     return channel;
                 },
                 destroy: async (channel) => {
-                    await channel.close();
+                    if(!channel) return;
+
+                    try {
+                        await channel.close();
+                    } catch(err) {
+                        if (err.code === 'ECHANNELCLOSED' || err.message.includes('closed')) {
+                            console.debug('Channel already closed, skipping:', err.message);
+                        } else {
+                            console.error('Failed to close channel:', err);
+                            throw err;
+                        }
+                    }
                 }
             }
 
