@@ -93,7 +93,7 @@ class topicAdapter {
     /**
      * @type string
      */
-    #getChannel;
+    getChannel;
     #exchangeType;
     #pool;
 
@@ -102,7 +102,7 @@ class topicAdapter {
         this.name = name;
 
         /* Function to get a RabbitMQ channel */
-        this.#getChannel = getChannel;
+        this.getChannel = getChannel;
 
         /* Connection pool */
         this.#pool = pool;
@@ -121,7 +121,7 @@ class topicAdapter {
     }
 
     async create(...props) {
-        const channel = await this.#getChannel();
+        const channel = await this.getChannel();
         try {
             await channel.assertQueue(this.name, {
                 durable: true
@@ -138,7 +138,7 @@ class topicAdapter {
     }
 
     async publish(...props) {
-        const channel = await this.#getChannel();
+        const channel = await this.getChannel();
         try {
             return channel.publish(
                 this.name,
@@ -171,9 +171,14 @@ class clientAdapter {
     #connection;
     #reconnectTimeout;
     #channelPool;
+    #ready;
 
     constructor(...props) {
-        this.openConnection();
+        this.#ready = this.openConnection();
+    }
+
+    async ready() {
+        return this.#ready;
     }
 
     async openConnection() {
@@ -240,6 +245,9 @@ class clientAdapter {
     }
 
     topic(name) {
+        if(!this.#getChannel) {
+            throw new Error(`MQ client is not ready yet. openConnection() has not completed.`);
+        }
         return new topicAdapter(name, this.#getChannel, this.#channelPool);
     }
 

@@ -112,6 +112,10 @@ const subscriptionHandler = (
 };
 
 async function getTopic(topicName) {
+    if(mqClient.ready) {
+        await mqClient.ready();
+    }
+
     if (topicsMap.has(topicName)) {
         return mqClient.topic(topicName);
     }
