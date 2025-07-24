@@ -123,14 +123,14 @@ class topicAdapter {
     async create(...props) {
         const channel = await this.getChannel();
         try {
-            await channel.assertQueue(this.name, {
-                durable: true
-            });
-            await channel.assertExchange(this.name, this.#exchangeType, {
+            // await channel.assertQueue(this.name, {
+            //     durable: true
+            // });
+            return channel.assertExchange(this.name, this.#exchangeType, {
                 durable: true,
                 ...props
             });
-            return channel.bindQueue(this.name, this.name);
+            // return channel.bindQueue(this.name, this.name);
         } finally {
             this.#pool.release(channel);
         }
